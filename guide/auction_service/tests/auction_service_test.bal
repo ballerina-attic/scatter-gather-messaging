@@ -1,10 +1,10 @@
 import ballerina/test;
 import ballerina/io;
-import ballerina/http;
 
-// Before Suite Function can be used to start the service
+# Before Suite Function can be used to start the service
+
 @test:BeforeSuite
-function beforeSuiteFunc() {
+function beforeSuiteFunc () {
     // Start the 'auctionService' before running the test
     _ = test:startServices("auction");
 
@@ -17,8 +17,17 @@ function beforeSuiteFunc() {
 // Client endpoint
 http:Client clientEP1 = new("http://localhost:9090/auction");
 
-// Test function
-@test:Config
+# Before test function
+
+function beforeFunc () {
+}
+
+# Test function
+
+@test:Config{
+    before:"beforeFunc",
+    after:"afterFunc"
+}
 function testAuctionService() returns error? {
     // Initialize the empty http requests and responses
     http:Request req = new;
@@ -45,9 +54,15 @@ function testAuctionService() returns error? {
     return ();
 }
 
-// After Suite Function is used to stop the service
+# After test function
+
+function afterFunc () {
+}
+
+# After Suite Function
+
 @test:AfterSuite
-function afterSuiteFunc() {
+function afterSuiteFunc () {
     // Stop the 'auctionService' after running the test
     test:stopServices("auction");
 

@@ -1,33 +1,32 @@
 import ballerina/http;
 import ballerina/io;
 import ballerina/log;
-//import ballerinax/docker;
-//import ballerinax/kubernetes;
-//
-//@docker:Config {
+// import ballerinax/docker;
+// import ballerinax/kubernetes;
+
+// @docker:Config {
 //    registry:"ballerina.guides.io",
 //    name:"auction_service",
 //    tag:"v1.0"
-//}
-//
-//@docker:Expose{}
-//
-//
-//@kubernetes:Ingress {
+// }
+
+// @docker:Expose{}
+
+// @kubernetes:Ingress {
 //    hostname:"ballerina.guides.io",
 //    name:"ballerina-guides-auction-service",
 //    path:"/"
-//}
-//
-//@kubernetes:Service {
+// }
+
+// @kubernetes:Service {
 //    serviceType:"NodePort",
 //    name:"ballerina-guides-auction-service"
-//}
-//
-//@kubernetes:Deployment {
+// }
+
+// @kubernetes:Deployment {
 //    image:"ballerina.guides.io/auction_service:v1.0",
 //    name:"ballerina-guides-auction-service"
-//}
+// }
 // Service endpoint
 listener http:Listener auctionEP = new(9090);
 
@@ -50,7 +49,7 @@ service auctionService on auctionEP {
         var payload = inRequest.getJsonPayload();
         if (payload is json) {
             // Valid JSON payload.
-            inReqPayload = untaint payload;
+            inReqPayload = <@untainted json> payload;
         } else {
             // NOT a valid JSON payload.
             outResponse.statusCode = 400;
@@ -60,8 +59,8 @@ service auctionService on auctionEP {
             return;
         }
 
-        json Item = inReqPayload.Item;
-        json Condition = inReqPayload.Condition;
+        json Item = checkpanic inReqPayload.Item;
+        json Condition = checkpanic inReqPayload.Condition;
 
         // If payload parsing fails, send a "Bad Request" message as the response.
         if (Item == null || Condition == null) {
@@ -124,7 +123,8 @@ service auctionService on auctionEP {
             if (jsonResp is json) {
                 jsonResponseBidder1 = jsonResp;
             } else {
-                panic(jsonResp);
+                error panicErr = jsonResp;
+                panic panicErr;
             }
             var bid1 = jsonResponseBidder1.Bid;
             if (bid1 is int) {
@@ -143,7 +143,8 @@ service auctionService on auctionEP {
             if (jsonResp is json) {
                 jsonResponseBidder2 = jsonResp;
             } else {
-                panic(jsonResp);
+                error panicErr = jsonResp;
+                panic panicErr;
             }
             var bid2 = jsonResponseBidder2.Bid;
             if (bid2 is int) {
@@ -162,7 +163,8 @@ service auctionService on auctionEP {
             if (jsonResp is json) {
                 jsonResponseBidder3 = jsonResp;
             } else {
-                panic(jsonResp);
+                error panicErr = jsonResp;
+                panic panicErr;
             }
             var bid3 = jsonResponseBidder3.Bid;
             if (bid3 is int) {
@@ -175,14 +177,14 @@ service auctionService on auctionEP {
         // Select the bidder with the highest bid.
         if (bidder1Bid > bidder2Bid) {
             if (bidder1Bid > bidder3Bid) {
-                jsonHighestBid = untaint jsonResponseBidder1;
+                jsonHighestBid = <@untainted json> jsonResponseBidder1;
             }
         } else {
             if (bidder2Bid > bidder3Bid) {
-                jsonHighestBid = untaint jsonResponseBidder2;
+                jsonHighestBid = <@untainted json> jsonResponseBidder2;
             }
             else {
-                jsonHighestBid = untaint jsonResponseBidder3;
+                jsonHighestBid = <@untainted json> jsonResponseBidder3;
             }
         }
         // Send the final response to client.
@@ -191,4 +193,3 @@ service auctionService on auctionEP {
         handleError(result);
     }
 }
-
