@@ -63,7 +63,7 @@ After that, you can create a module by executing following command
 ```bash
    $ ballerian create auction_service 
 ```
-Then create emply `.bal` files as depicted in the above folder structure.
+Then create empty `.bal` files as depicted in the above folder structure.
 ### Developing the service
 
 Let's look at the implementation of the auction service, which acts as the scatter-gather component.
@@ -93,7 +93,6 @@ Refer to the [auction_service.bal](https://github.com/ballerina-guides/scatter-g
 ```ballerina
 import ballerina/http;
 import ballerina/io;
-import ballerina/log;
 // import ballerinax/docker;
 // import ballerinax/kubernetes;
 
@@ -292,7 +291,7 @@ service auctionService on auctionEP {
 Let's now look at the code segment that is responsible for communicating with all the endpoints of the bidders.
 
 ```ballerina
-      fork {
+        fork {
             // Worker to communicate with 'Bidder 1'.
             worker bidder1Worker returns http:Response|error {
                 http:Request outReq = new;
@@ -389,7 +388,6 @@ Let's now look at the code segment that is responsible for communicating with al
                 bidder3Bid = -1;
             }
         }
-     }
 ```
 
 The above code shows how the auction service initiates a request to all bidders that are included in the system to get their bid value.

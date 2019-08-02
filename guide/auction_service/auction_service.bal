@@ -1,6 +1,5 @@
 import ballerina/http;
 import ballerina/io;
-import ballerina/log;
 // import ballerinax/docker;
 // import ballerinax/kubernetes;
 
